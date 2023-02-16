@@ -77,6 +77,8 @@ Make sure you create **grpc-gateway** project at same level with [simple-grpc-se
 
 You need to generate Go Stubs for every gRPC Service from its proto files. You can find the proto files in [simple-grpc-server](#1-run-simple-grpc-server) project in folder `src/main/proto.`
 
+> In order to generate Go code/stub, you need to provide `go_package` option in your proto file. Read more [here](https://protobuf.dev/reference/go/go-generated/#package) 
+
 Make sure you are in root of `grpc-gateway` project. Generate Go stubs for employeeService.proto, here is the structure of the command:
 
 ```sh
