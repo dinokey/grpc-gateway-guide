@@ -8,7 +8,7 @@ Read more about gRPC Gateway [here](https://grpc-ecosystem.github.io/grpc-gatewa
 
 There are some things that you need to do before start this guide:
 
-1. Install [Go Programming Language](https://go.dev/). For now, gRPC Server only support Go for its language.
+1. Install [Go Programming Language](https://go.dev/) (this guide using version 1.19.6). For now, gRPC Gateway Server only support Go for its language.
 2. Install [Protocol Buffer Compiler](https://grpc.io/docs/protoc-installation/)(protoc). This tool is needed for generate Go Stubs from our proto file(s).
 
 This guide created in environment:
@@ -23,7 +23,7 @@ We are provide simple gRPC Server for this guide. Find it in [this repo](https:/
 
 Just run the server with command `./gradlew bootRun`. The Server will run in localhost at port 9090.
 
-_Note: In order to run this Server you need to install Java 17 in your system_
+_Note: In order to run this Server, you need to install Java 17 in your system_
 
 ### 2. Install Required Go modules for Protoc (Protocol Buffer Compiler)
 
@@ -36,6 +36,8 @@ go install \
     google.golang.org/protobuf/cmd/protoc-gen-go@latest \
     google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 ```
+
+_you can follow [this](https://github.com/grpc-ecosystem/grpc-gateway#compile-from-source) if command above fail_
 
 This will place four binaries in your `$GOBIN`;
 
@@ -67,7 +69,7 @@ where:
 - `employee-service`: directory where you placed Go stubs of employeeService.proto
 - `salary-service`: directory where you placed Go stubs of salaryService.proto
 - `type`: directory where you placed Go stubs of type/\*.proto
-- `server`: directory where you code gRPC gateway server
+- `server`: directory for gRPC gateway server
 
 Make sure you create **grpc-gateway** project at same level with [simple-grpc-server](#1-run-simple-grpc-server).
 
@@ -130,7 +132,7 @@ grpc-gateway
 |--server
 ```
 
-Next, do the same thing for `employee.proto` and `salary.proto`. In this case, we the proto files doesn't have service definition, so we can generate it into single directory. The command may looks like:
+Next, do the same thing for `employee.proto` and `salary.proto`. In this case the proto files doesn't have gRPC service definition, so we can generate it into single directory. The command may looks like:
 ```sh
 protoc --proto_path $pathToProject/simple-grpc-server/src/main/proto \
     --proto_path $pathToProject/simple-grpc-server/build/extracted-include-protos/main \
@@ -172,7 +174,7 @@ grpc-gateway
 |--server
 ```
 
-And now, create the gRPC Gateway Server inside `server` folder, named it `main.go`. The content may looks like:
+And now, create the gRPC Gateway Server Entry Point inside `server` folder, named it `main.go`. The content may looks like:
 ```go
 package main
 
@@ -229,9 +231,9 @@ func main() {
 }
 ```
 
-### 5. Wrap all Go Stubs as Go Module
+### 5. Wrap all Go Stubs as Go Modules
 
-In this step, you need to define all Stubs as Go module. So, it can me imported to another Go module.
+In this step, you need to define all Stubs as Go modules. So, it can me imported to another Go module.
 
 Change your terminal directory to a directory where file(s) `.pb.go` located. For example at `grpc-gateway/employee-service/samsung/example/demo/v1/service`. Then run command below:  
 ```sh
@@ -240,7 +242,7 @@ go mod init github.com/example/service/employee
 
 The name of Go module must be same with `go_package` option inside `employeeService.proto`
 
-Then, `go.mod` will appear. Now, the project structure should look like:
+Then, `go.mod` file will appear. Now, the project structure should look like:
 ```
 grpc-gateway
 |--employee-service
@@ -305,7 +307,7 @@ grpc-gateway
    go.mod
 ```
 
-### 6. Tidy up our Go Module
+### 6. Tidy up our Go Modules
 
 In every Go modules that we created before, we need to run command `go mod tidy`.
 The command aims to manage our module dependencies, add the missing and removes unused module dependencies.
@@ -316,7 +318,7 @@ Change your terminal directory to `employee-service/samsung/example/demo/v1/serv
 go mod tidy
 ```
 
-And you will find error:
+And you will face error:
 ```error
 github.com/example/service/employee imports
         github.com/example/types: cannot find module providing package github.com/example/types: module github.com/example/types: git ls-remote -q origin in /home/srin/go/pkg/mod/cache/vcs/888ec4ca3da64b8aec2cdfcbee76d0ef598d08bbfdf269db419003ba5e6d18ad: exit status 128:
@@ -333,10 +335,12 @@ Then, run command `go mod tidy` again, and it should success.
 
 Do the same thing to other modules (`salaryService` and `type`).
 
+_You may not experiencing error if all of your Go Modules aldready uploaded to registry. So the best practice is, upload your Go Modules to registry once you created/updated it._
+
 ### 7. Run the gRPC Gateway Server
 
 And now, lets run our gRPC Server!
-Go to `server` directory and run command `go mod tidy`. If error 'module not found' happen, fix it like step above.
+Go to `server` directory and run command `go mod tidy`. If error **'module not found'** happen, fix it like previous step.
 
 After that, run the server by run command `go run main.go`
 
@@ -395,3 +399,7 @@ result:
   "bonus": 3000000
 }
 ```
+
+## Helper
+
+Find the complete code in branch `guide-with-code` of this repo.
