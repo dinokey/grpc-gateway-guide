@@ -10,6 +10,7 @@ There are some things that you need to do before start this guide:
 
 1. Install [Go Programming Language](https://go.dev/) (this guide using version 1.19.6). For now, gRPC Gateway Server only support Go for its language.
 2. Install [Protocol Buffer Compiler](https://grpc.io/docs/protoc-installation/)(protoc). This tool is needed for generate Go Stubs from our proto file(s).
+3. Have a basic knowledge about Go Module and [how it is managed](https://go.dev/doc/tutorial/create-module).
 
 This guide created in environment:
 
